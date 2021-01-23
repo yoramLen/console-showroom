@@ -1,22 +1,118 @@
 import React from "react"
-import { Link } from "gatsby"
+import { Link, useStaticQuery, graphql } from "gatsby"
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+import Layout from "../components/Layout"
+import SEO from "../components/Seo"
+import {Wrapper, Image, Console,BottomEdgeDown, BottomEdgeUp} from "../pageStyles/pageStyles"
+import {COLORS} from "../constants"
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
+const IndexPage = () => {
+  const {
+    wpcontent: {
+      page: {
+        homepage: {
+          title,
+          bannerPicture,
+          homeText,
+          featuredConsoles,
+         
+        }
+      },
+    },
+  } = useStaticQuery(graphql`
+    query {
+      wpcontent {
+        page(id: "home", idType: URI) {
+          homepage {
+            title
+            homeText
+            bannerPicture {
+              altText
+              sourceUrl
+              imageFile {
+                childImageSharp {
+                  fluid(quality: 100) {
+                    ...GatsbyImageSharpFluid_withWebp
+                  }
+                }
+              }
+            }
+            featuredConsoles {
+              ... on WPGraphql_Console {
+                slug
+                console {
+                  consoleName
+                  releaseYear
+                  image1 {
+                    altText
+                    sourceUrl
+                    imageFile {
+                      childImageSharp {
+                        fluid(quality: 50, grayscale: true) {
+                          ...GatsbyImageSharpFluid_withWebp
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `)
+
+  //console.log(data)
+console.log(featuredConsoles)
+  return (
+    <Layout>
+      <SEO title="Home" />
+      <Wrapper>
+      <div className="banner">
+      <Image
+            fluid={bannerPicture.imageFile.childImageSharp.fluid}
+            alt={bannerPicture.altText}
+          />
+          <div className="inner-div">
+            <p className="header-title">{title}</p>
+            <p className="header-description">{homeText}</p>
+          </div>
+          <BottomEdgeDown color={COLORS.BLACK}/>
+      </div>
+<div className="description">
+  <p>{homeText}</p>
+  <BottomEdgeUp color={COLORS.PRIMARY}/>
+  </div>
+  <div className="consoles">
+          <h2>Featured Consoles</h2>
+          <div className="console-items">
+            {featuredConsoles.map(({console,slug}) =>(
+              <Console key={slug} to={`/${slug}`}>
+                <Image
+                fluid={console.image1.imageFile.childImageSharp.fluid}
+                alt={console.image1.altText}
+                />
+                <div className="console-info">
+                  <p>
+                    {console.consoleName}
+                  </p>
+                  <p>
+                    {console.releaseYear}
+                  </p>
+
+                </div>
+              </Console>
+            ))}
     </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
-)
+  </div>
+
+      </Wrapper>
+
+
+
+    </Layout>
+  )
+}
 
 export default IndexPage
