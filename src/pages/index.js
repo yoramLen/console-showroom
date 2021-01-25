@@ -63,7 +63,7 @@ const IndexPage = () => {
     }
   `)
 
-  //console.log(data)
+  //console.log(data) ==> gedaan om de query te testen!
 console.log(featuredConsoles)
   return (
     <Layout>

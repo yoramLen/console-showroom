@@ -44,9 +44,10 @@ const ConsoleTemplate = (
                     manufacturer.name
                 ))}</h3>
                 <p className="description">{console.shortDescription}</p>
-                <p>
-                    <strong>Releasejaar: {console.releaseYear}</strong>
+                <p className="description">
+                    <strong>Releaseyear: {console.releaseYear}</strong>
                 </p>
+                <p className="description">Notable games are {console.notableGames}</p>
             </div>
         </div>
         <div className="console-pictures">
@@ -83,6 +84,7 @@ export const pageQuery = graphql`
             consoleName
             releaseYear
             shortDescription
+            notableGames
             image1 {
             sourceUrl
               altText,
